@@ -1,0 +1,75 @@
+species,speciescode,scientificname,commonname
+1,AUBT,Alectura lathami,Australian Brush-turkey
+2,AUKP,Alisterus scapularis,Australian King-Parrot
+3,AUMP,Cracticus tibicen,Australian Magpie
+4,AURV,Corvus coronoides,Australian Raven
+5,BELM,Manorina melanophrys,Bell Miner
+6,BFCS,Coracina novaehollandiae,Black-faced Cuckoo-shrike
+7,BFMO,Monarcha melanopsis,Black-faced Monarch
+8,BHHE,Melithreptus brevirostris,Brown-headed Honeyeater
+9,BRBW,Phaps elegans,Brush Bronzewing
+10,BRCD,Macropygia amboinensis,Brown Cuckoo-Dove
+11,BRCK,Cacomantis variolosus,Brush Cuckoo
+12,BRGY,Gerygone mouki,Brown Gerygone
+13,BRTB,Acanthiza pusilla,Brown Thornbill
+14,CBCK,Scythrops novaehollandiae,Channel-billed Cuckoo
+15,CICB,Coracina tenuirostris,Cicadabird
+16,CRHE,Phylidonyris pyrrhopterus,Crescent Honeyeater
+17,CRHW,Hylacola pyrrhopygia,Chestnut-rumped Heathwren
+18,CROS,Platycercus elegans,Crimson Rosella
+19,CRST,Falcunculus frontatus,Crested Shrike-tit
+20,EASB,Acanthorhynchus tenuirostris,Eastern Spinebill
+21,EAWB,Psophodes olivaceus,Eastern Whipbird
+22,EAYR,Eopsaltria australis,Eastern Yellow Robin
+23,EROS,Platycercus eximius,Eastern Rosella
+24,FLMR,Petroica phoenicea,Flame Robin
+25,FTCK,Cacomantis flabelliformis,Fan-tailed Cuckoo
+26,GCUR,Strepera versicolor,Grey Currawong
+27,GGCT,Callocephalon fimbriatum,Gang-Gang Cockatoo
+28,GLDW,Pachycephala pectoralis,Golden Whistler
+29,GRBB,Cracticus torquatus,Grey Butcherbird
+30,GRFT,Rhipidura albiscapa,Grey Fantail
+31,GRST,Colluricincla harmonica,Grey Shrike-thrush
+32,HBCK,Chalcites basalis,Horsfield's Bronze-Cuckoo
+33,KOEL,Eudynamys orientalis,Eastern Koel
+34,LBSW,Sericornis magnirostra,Large-billed Scrubwren
+35,LEFC,Myiagra rubecula,Leaden Flycatcher
+36,LEHE,Meliphaga lewinii,Lewin's Honeyeater
+37,LKKB,Dacelo novaeguineae,Laughing Kookaburra
+38,MTBD,Dicaeum hirundinaceum,Mistletoebird
+39,NHHE,Phylidonyris novaehollandiae,New Holland Honeyeater
+40,NSYF,Philemon corniculatus,Noisy Friarbird
+41,OBOR,Oriolus sagittatus,Olive-backed Oriole
+42,PCUR,Strepera graculina,Pied Currawong
+43,PFCN,Falco peregrinus,Peregrine Falcon
+44,PLTB,Pycnoptilus floccosus,Pilotbird
+45,RBFI,Neochmia temporalis,Red-browed Finch
+46,RBTC,Climacteris erythrops,Red-browed Treecreeper
+47,REDW,Anthochaera carunculata,Red Wattlebird
+48,RLOR,Trichoglossus haematodus,Rainbow Lorikeet
+49,ROSR,Petroica rosea,Rose Robin
+50,RUFT,Rhipidura rufifrons,Rufous Fantail
+51,RUFW,Pachycephala rufiventris,Rufous Whistler
+52,SAKF,Todiramphus sanctus,Sacred Kingfisher
+53,SBCK,Chrysococcyx lucidus,Shining Bronze-Cuckoo
+54,SBOW,Ptilonorhynchus violaceus,Satin Bowerbird
+55,SCCT,Cacatua galerita,Sulphur-crested Cockatoo
+56,SCHE,Myzomela sanguinolenta,Scarlet Honeyeater
+57,SEYE,Zosterops lateralis,Silvereye
+58,SLYB,Menura novaehollandiae,Superb Lyrebird
+59,SOEW,Stipiturus malachurus,Southern Emu-wren
+60,SPAR,Pardalotus punctatus,Spotted Pardalote
+61,SPQT,Cinclosoma punctatum,Spotted Quail-thrush
+62,STTB,Acanthiza lineata,Striated Thornbill
+63,SUFW,Malurus cyaneus,Superb Fairy-wren
+64,VAFW,Malurus lamberti,Variegated Fairy-wren
+65,WBCS,Coracina papuensis,White-bellied Cuckoo-shrike
+66,WBIL,Smicrornis brevirostris,Weebill
+67,WBSW,Sericornis frontalis,White-browed Scrubwren
+68,WBWS,Artamus superciliosus,White-browed Woodswallow
+69,WEHE,Lichenostomus leucotis,White-eared Honeyeater
+70,WNHE,Melithreptus lunatus,White-naped Honeyeater
+71,WONP,Leucosarcia melanoleuca,Wonga Pigeon
+72,WTTC,Cormobates leucophaea,White-throated Treecreeper
+73,YFHE,Lichenostomus chrysops,Yellow-faced Honeyeater
+74,YTBC,Calyptorhynchus funereus,Yellow-tailed Black Cockatoo

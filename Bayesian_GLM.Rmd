@@ -1,0 +1,170 @@
+---
+title: "Bayesian generalized linear modelling"
+date: "31st March 2022"
+output:
+  word_document: default
+  fig_width: 5 
+  fig_height: 5 
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(here)
+library(dplyr)
+library(runjags)
+
+```  
+
+# Forest avifauna exhibit enduring responses to historical high-severity wildfires  
+
+The number of bird species in relation to fire predictors in montane dry sclerophyll forests.    
+
+*Study area*    
+Greater Blue Mountains World Heritage Area, Australia.  
+The 48 sites were distributed along an ~ 80 km latitudinal gradient from the upper Blue Mountains to Gospers Mountain in the north.       
+
+*Site level*    
+All bird surveys were conducted in late spring/early summer 2018. Nocturnal species were excluded from the bird data.    
+
+LAT_s; standardized (mean = 0, s.d. = 1) northing (latitude) at the center of each site.     
+MFC_s; standardized area-weighted mean number of fires that burnt each site between 1982 and 2018.    
+FY2; an indicator variable for year of last fire (0 if 2002, 1 if 2013).       
+SEV; an indicator variable for high-severity fire, where 0 = less than half the site had been burned by at least one high-severity fire since 1982, and 1 = more than 50% of the site was burnt by such a fire.    
+INT; variable for the FY2*SEV interaction.    
+
+
+### Read in the data
+
+```{r}
+
+# Read in the binary bird response data - species not detected (0) or detected (1) in each site.   
+# The order of rows and columns correspond to site numbers and species numbers respectively (ascending order).  
+path <- here("data", "bird_data3.csv")
+dat.counts <- read.csv(path, header = FALSE, stringsAsFactors = FALSE)
+
+# Site attributes, predictor variables.
+path <- here("data", "sites_lookup3.csv")
+SitesLookup <- read.csv(path, stringsAsFactors = FALSE)
+
+# Species numbers, codes and names.
+path <- here("data", "species_lookup3.csv")
+SpeciesLookup <- read.csv(path, stringsAsFactors = FALSE)
+
+```
+
+
+### Count the number of species recorded in each site
+
+```{r}
+
+No.species <- cbind(1:48, rowSums(dat.counts))
+colnames(No.species)[1:2] <- c("site", "Sp")
+
+No.species <- as.data.frame(No.species)
+
+No.species <- No.species %>% left_join(SitesLookup, by = "site")
+
+DAT <- No.species %>%
+  dplyr::select(nspecies = Sp, FY2, SEV, INT, LAT_s, MFC_s)
+
+```
+
+
+### Check for over- or under-dispersion by fitting a simple GLM with quasipoisson family
+
+```{r}
+
+m_quas <- glm(nspecies ~ LAT_s + MFC_s + FY2 + SEV + INT, family = quasipoisson(link = "log"), data = DAT)
+summary(m_quas)
+
+# The data are under-dispersed (estimated dispersion ~ 0.49). 
+
+```
+
+
+### JAGS model code    
+Equation 2     
+
+Michael Bedward adapted the model code below from an example in:      
+Hilbe, J.M., De Souza, R.S., Ishida, E.E., 2017. Bayesian models for astrophysical data: using R, JAGS, Python, and Stan. Cambridge University Press.        
+
+See: https://www.bayesianmodelsforastrophysicaldata.com/code-6-18-and-6-19 for original code.    
+
+```{r}
+
+GPmodel_code <- "model {
+  # Priors for regression coefficients
+  beta0 ~ dnorm(0, 0.1)
+  betaFY2 ~ dnorm(0, 0.1)
+  betaSEV ~ dnorm(0, 0.1)
+  betaINT ~ dnorm(0, 0.1)
+  betaLAT ~ dnorm(0, 0.1)
+  betaMFC ~ dnorm(0, 0.1)
+
+  # Prior for delta parameter of GP distribution
+  delta ~ dunif(-1, 1)
+
+  # Constant for 'zeros trick'
+  C <- 10000
+  
+  for (i in 1:Nsites){
+    Zeros[i] ~ dpois(Zeros.mean[i])
+    Zeros.mean[i] <- -L[i] + C
+    
+    l1[i] <- log(mu[i])
+    l2[i] <- (nspecies[i] - 1) * log(mu[i] + delta * nspecies[i])
+    l3[i] <- -mu[i] - delta * nspecies[i]
+    l4[i] <- -loggam(nspecies[i] + 1)
+    L[i] <- l1[i] + l2[i] + l3[i] + l4[i]
+    
+    mu[i] <- (1 - delta)*exp(loglinpredictor[i])
+    loglinpredictor[i] <- beta0 + betaLAT * LAT_s[i] + betaMFC * MFC_s[i] + betaFY2 * FY2[i] + 
+                          betaSEV * SEV[i] + betaINT * INT[i]
+  }
+
+  # Discrepancy measures: mean, variance, Pearson residuals
+  for (i in 1:Nsites){
+    ExpY[i] <- mu[i] / (1 - delta)
+    VarY[i] <- mu[i] / ((1 - delta)^3)
+    Pres[i] <- (nspecies[i] - ExpY[i]) / sqrt(VarY[i])
+  } 
+  
+}"
+
+```
+
+
+### Model data
+
+```{r}
+
+dat_model <- c(as.list(DAT), list(Nsites = nrow(DAT), Zeros = rep(0, nrow(DAT))))
+
+```
+
+
+### Run the model
+
+```{r}
+
+GPmodel <- run.jags(GPmodel_code, monitor = c("beta0", "betaLAT", "betaMFC", "betaFY2", "betaSEV", "betaINT", "delta"),   
+                    data = dat_model, 
+                    n.chains = 4,
+                    sample = 2000,
+                    thin = 10)
+
+```
+
+
+### Model summaries and plots
+
+```{r}
+
+summary(GPmodel)
+
+plot(GPmodel)
+
+```
+

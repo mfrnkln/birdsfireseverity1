@@ -1,0 +1,115 @@
+---
+title: "Bayesian latent variable modelling"
+date: "31st March 2022"
+output:
+  word_document: default
+  fig_width: 5 
+  fig_height: 7   
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(here)
+library(boral)
+
+```  
+  
+# Forest avifauna exhibit enduring responses to historical high-severity wildfires
+
+Latent variable modelling using the boral package (Hui 2016, Hui et al. 2015, Warton et al. 2015).  
+
+*Study area*  
+Greater Blue Mountains World Heritage Area, Australia.
+The 48 sites were distributed along an ~ 80 km latitudinal gradient from the upper Blue Mountains to Gospers Mountain in the north.     
+
+*Site level*  
+All bird surveys were conducted in late spring/early summer 2018. Nocturnal species were excluded from the bird data.  
+
+LAT_s; standardized (mean = 0, s.d. = 1) northing (latitude) at the center of each site.   
+MFC_s; standardized area-weighted mean number of fires that burnt each site between 1982 and 2018.  
+FY2; an indicator variable for year of last fire (0 if 2002, 1 if 2013).     
+SEV; an indicator variable for high-severity fire, where 0 = less than half the site had been burned by at least one high-severity fire since 1982, and 1 = more than 50% of the site was burnt by such a fire.  
+INT; variable for the FY2*SEV interaction.  
+
+
+### Read in the data
+
+```{r}
+
+# Read in the binary bird response data - species not detected (0) or detected (1) in each site. 
+# The order of rows and columns correspond to site numbers and species numbers respectively (ascending order).
+path <- here("data", "bird_data3.csv")
+dat.mod <- read.csv(path, header = FALSE, stringsAsFactors = FALSE)
+
+# Site attributes, predictor variables.
+path <- here("data", "sites_lookup3.csv")
+SitesLookup <- read.csv(path, stringsAsFactors = FALSE)
+
+# Species numbers, codes and names.
+path <- here("data", "species_lookup3.csv")
+SpeciesLookup <- read.csv(path, stringsAsFactors = FALSE)
+
+```
+
+
+### Model 1 - pure latent variable model for unconstrained ordination 
+Appendix A, Equation A.1.  
+
+```{r}
+
+
+model_1 <- boral(y = dat.mod, lv.control = list(num.lv = 2), family = "binomial",
+                 row.eff = "random",
+                 
+                 prior.control = list(
+                   type = c("normal", "normal", "normal", "halfcauchy"),
+                   hypparams = c(1, 1, 1, 1)
+                 ),
+                 
+                 save.model = TRUE, 
+                 model.name = "model_1.txt")
+
+# Diagnostic plots
+par(mfrow = c(2,2))
+plot(model_1)
+
+```
+
+
+### Model 2 - correlated response model
+Equation 1  
+
+```{r}
+
+# Create a matrix of predictors - subset of SitesLookup
+dat.preds <- SitesLookup[,c("LAT_s", "MFC_s", "FY2", "SEV", "INT")]
+dat.preds <- as.matrix(sapply(dat.preds, as.numeric)) 
+
+
+model_2 <- boral(y = dat.mod, X = dat.preds,
+                 lv.control = list(num.lv = 2), family = "binomial",
+                 row.eff = "random",
+                 
+                 prior.control = list(
+                   type = c("normal", "normal", "normal", "halfcauchy"),
+                   hypparams = c(1, 1, 1, 1)
+                 ),
+                 
+                 save.model = TRUE, 
+                 model.name = "model_2.txt")
+
+# Diagnostic plots
+par(mfrow = c(2,2))
+plot(model_2)
+
+```
+
+
+### References    
+Hui, F.K., 2016. boral–Bayesian ordination and regression analysis of multivariate abundance data in R. Methods in Ecology and Evolution 7, 744-750.  
+
+Hui, F.K., Taskinen, S., Pledger, S., Foster, S.D., Warton, D.I., 2015. Model‐based approaches to unconstrained ordination. Methods in Ecology and Evolution 6, 399-411.    
+
+Warton, D.I., Blanchet, F.G., O’Hara, R.B., Ovaskainen, O., Taskinen, S., Walker, S.C., Hui, F.K., 2015. So many variables: joint modeling in community ecology. Trends in Ecology & Evolution 30, 766-779.  
